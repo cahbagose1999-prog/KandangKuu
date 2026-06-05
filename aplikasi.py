@@ -15,76 +15,125 @@ if "nama_peternak" not in st.session_state:
     st.session_state.nama_peternak = ""
 if "lokasi_peternak" not in st.session_state:
     st.session_state.lokasi_peternak = ""
+if "jenis_unggas" not in st.session_state:
+    st.session_state.jenis_unggas = ""
+if "status_bisnis" not in st.session_state:
+    st.session_state.status_bisnis = ""
 if "kandang_dipilih" not in st.session_state:
     st.session_state.kandang_dipilih = None
 
-# Gudang Keuangan Global yang Mudah Dipahami
+# Memori Logistik
 if "stok_pakan" not in st.session_state:
-    st.session_state.stok_pakan = 500.0  # Kg
-if "sisa_uang" not in st.session_state:
-    st.session_state.sisa_uang = 5000000  # Rp 5.000.000
+    st.session_state.stok_pakan = 85.0
+if "tugas_pakan_done" not in st.session_state:
+    st.session_state.tugas_pakan_done = False
 
-# Daftar Kandang KUB Aktif
+# Daftar Kandang Bawaan
 if "daftar_kandang" not in st.session_state:
     st.session_state.daftar_kandang = [
-        {"id": 0, "nama": "Kandang Pembesaran (Blok A)", "tipe": "Ayam KUB Daging", "umur": 35, "populasi": 200, "mati": 0, "pakan_done": False},
-        {"id": 1, "nama": "Kandang Petelur (Blok B)", "tipe": "Ayam KUB Telur", "umur": 120, "populasi": 300, "mati:0": 0, "pakan_done": False}
+        {"id": 0, "nama": "Kandang Blok A", "tipe": "Pembesaran", "umur": 35, "populasi": 190, "mortalitas": 1, "pakan_done": False},
+        {"id": 1, "nama": "Kandang Blok B", "tipe": "Indukan/Petelur", "umur": 120, "populasi": 250, "mortalitas": 0, "pakan_done": False}
     ]
 
 # =====================================================================
-# HALAMAN 1: GERBANG LOGIN
+# HALAMAN 1: GERBANG LOGIN (PRIORITAS UTAMA)
 # =====================================================================
 if st.session_state.halaman_aktif == "LOGIN":
     st.markdown("<h2 style='text-align: center; color: #2E7D32;'>🟢 KandangKu</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: gray; font-size:14px; margin-top:0;'>Asisten Pintar Peternakan Ayam KUB</p>", unsafe_allow_html=True)
-    st.write("")
+    st.markdown("<p style='text-align: center; color: gray; font-size:14px; margin-top:0;'>Asisten Manajemen Unggas Berbasis AI & IoT</p>", unsafe_allow_html=True)
+    st.divider()
     
-    if st.button("Masuk Cepat Ke Aplikasi ➡️", use_container_width=True):
+    # Tombol Akses Utama
+    link_wa = "https://wa.me"
+    st.link_button("🟢 Masuk Cepat via WhatsApp", link_wa, use_container_width=True)
+    
+    link_google = "https://google.com"
+    st.link_button("🔴 Masuk Cepat via Akun Google", link_google, use_container_width=True)
+    
+    st.divider()
+    st.caption("⚙️ **Simulasi Pengujian Blueprint:**")
+    if st.button("Lanjutkan ke Pengisian Data ➡️", use_container_width=True):
         st.session_state.halaman_aktif = "PROFIL"
         st.rerun()
 
 # =====================================================================
-# HALAMAN 2: BIODATA PETERNAK
+# HALAMAN 2: PENDAFTARAN & KONFIRMASI KOMODITAS UNGGAS
 # =====================================================================
 elif st.session_state.halaman_aktif == "PROFIL":
-    st.markdown("<h3 style='color: #2E7D32;'>👤 Selamat Datang!</h3>", unsafe_allow_html=True)
-    st.write("Silakan isi nama dan lokasi Anda terlebih dahulu:")
+    st.markdown("<h3 style='color: #2E7D32;'>👤 Setup Awal Peternakan</h3>", unsafe_allow_html=True)
+    st.write("Lengkapi profil data dasar Anda dan komoditas unggas:")
+    st.write("")
     
-    nama_input = st.text_input("Nama Anda (Pemilik):", placeholder="Contoh: Pak Budi")
-    lokasi_input = st.text_input("Lokasi Kandang (Kecamatan/Kota):", placeholder="Contoh: Kesambi, Cirebon")
+    # Bagian A: Biodata
+    nama_input = st.text_input("Nama Lengkap Pemilik:", placeholder="Contoh: Pak Budi")
     
-    if st.button("Buka Kandang Saya 🔓", use_container_width=True):
-        if not nama_input or not lokasi_input:
-            st.error("⚠️ Nama dan lokasi tidak boleh kosong!")
+    st.markdown("<b>📍 Wilayah Cakupan Kandang</b>", unsafe_allow_html=True)
+    provinsi_input = st.selectbox("Provinsi:", ["Jawa Barat", "Jawa Tengah", "Jawa Timur", "Luar Jawa"])
+    kabupaten_input = st.text_input("Kabupaten / Kota:", placeholder="Contoh: Cirebon")
+    kecamatan_input = st.text_input("Kecamatan:", placeholder="Contoh: Kesambi")
+    
+    st.divider()
+    # Bagian B: Konfirmasi Jenis Ternak Unggas (Koreksi Penting Anda!)
+    st.markdown("<b>🧬 Konfirmasi Komoditas Unggas Utama</b>", unsafe_allow_html=True)
+    unggas_input = st.selectbox(
+        "Pilih Jenis Komoditas Ternak Anda:",
+        [
+            "Ayam Kampung Unggul Balitbangtan (Ayam KUB)",
+            "Ayam Broiler (Pedaging Industri)",
+            "Ayam Layer (Petelur Ras)",
+            "Bebek (Petelur / Pedaging)",
+            "Burung Puyuh Petelur"
+        ]
+    )
+    
+    st.divider()
+    # Bagian C: Status Kelola
+    status_bisnis_input = st.radio("Sistem Tata Kelola Bisnis:", ["Peternak Mandiri (Kelola Sendiri)", "Peternak Kemitraan (Ikut SOP Perusahaan/PT)"])
+    
+    st.write("")
+    if st.button("Simpan & Buka Dashboard 🔓", use_container_width=True):
+        if not nama_input or not kabupaten_input or not kecamatan_input:
+            st.error("⚠️ Seluruh data identitas lokasi wajib diisi!")
         else:
             st.session_state.nama_peternak = nama_input
-            st.session_state.lokasi_peternak = lokasi_input
-            st.session_state.halaman_aktif = "BERANDA_KANDANG"
+            st.session_state.lokasi_peternak = f"{kecamatan_input}, {kabupaten_input}"
+            st.session_state.jenis_unggas = unggas_input
+            st.session_state.status_bisnis = status_bisnis_input
+            st.session_state.halaman_aktif = "DASHBOARD"
             st.rerun()
 
 # =====================================================================
-# HALAMAN 3: BERANDA UTAMA (DAFTAR KANDANG)
+# HALAMAN 3: DASHBOARD RINGKAS (KESIMPULAN PENTING & WIDGET CUACA)
 # =====================================================================
-elif st.session_state.halaman_aktif == "BERANDA_KANDANG":
-    st.markdown(f"<div style='background-color: #2E7D32; padding: 12px; border-radius: 12px; color: white; margin-bottom: 12px;'><h4 style='margin: 0; color: white;'>☀️ Selamat Pagi, {st.session_state.nama_peternak}!</h4><small>📍 {st.session_state.lokasi_peternak}</small></div>", unsafe_allow_html=True)
+elif st.session_state.halaman_aktif == "DASHBOARD":
+    # Header Ringkas Berwarna Hijau
+    st.markdown(f"<div style='background-color: #1B5E20; padding: 12px; border-radius: 12px; color: white; margin-bottom: 12px;'><h4 style='margin: 0; color: white;'>☀️ {st.session_state.nama_peternak} Dashboard</h4><small>🧬 Komoditas: {st.session_state.jenis_unggas}</small></div>", unsafe_allow_html=True)
     
-    # KOTAK INFO KANTONG UANG & PAKAN (BAHASA PASAR)
-    st.markdown("<div style='display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;'><div style='background-color: #E8F5E9; padding: 10px; border-radius: 10px; text-align: center;'><b>💰 Sisa Uang Kas</b><br><span style='color:#2E7D32; font-weight:bold;'>Rp "+f"{st.session_state.sisa_uang:,}"+"</span></div><div style='background-color: #FFF3E0; padding: 10px; border-radius: 10px; text-align: center;'><b>🌾 Stok Pakan</b><br><span style='color:#EF6C00; font-weight:bold;'>"+f"{st.session_state.stok_pakan:.1f} Kg"+"</span></div></div>", unsafe_allow_html=True)
+    # WIDGET CUACA LOKAL REAL-TIME (BARU - REPLIKA PERMINTAAN)
+    st.markdown("##### 🌤️ Kondisi Lingkungan Kandang Saat Ini")
+    st.markdown(f"<div style='background-color: #E3F2FD; padding: 10px; border-radius: 10px; border: 1px solid #BBDEFB; font-size:13px; color:#1565C0;'>📍 Wilayah: <b>{st.session_state.lokasi_peternak}</b><br>🌡️ Suhu Udara: <b>27.5 °C</b> (Ideal) | 💧 Kelembapan: <b>65%</b><br>🔮 Prediksi: Berpotensi hujan ringan sore nanti.</div>", unsafe_allow_html=True)
 
-    st.markdown("### 🛖 Pilih Kandang yang Mau Diurus:")
-    st.write("Ketuk salah satu blok kandang di bawah ini untuk mengisi laporan atau melihat saran AI:")
-    
-    # Menampilkan daftar kandang berupa kotak besar yang mudah diklik orang awam
+    # PERINGATAN DARURAT PENDEK
+    st.markdown("<h5 style='margin-bottom:4px; margin-top:12px;'>⚠️ Peringatan Sistem</h5>", unsafe_allow_html=True)
+    st.markdown("<div style='background-color: #FFF3E0; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; border-left: 4px solid #EF6C00; font-size: 13px; color: #E65100;'>💉 <b>Vaksin:</b> Jadwal Vaksin ND Blok A hari ini!</div>", unsafe_allow_html=True)
+    if st.session_state.stok_pakan < 100:
+        st.markdown(f"<div style='background-color: #FFEBEE; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; border-left: 4px solid #C62828; font-size: 13px; color: #C62828;'>🚨 <b>Kritis:</b> Stok pakan gudang menipis ({st.session_state.stok_pakan:.1f} Kg)!</div>", unsafe_allow_html=True)
+
+    # KESIMPULAN REKAP SEKTOR
+    st.markdown("<h5 style='margin-bottom:4px; margin-top:12px;'>📊 Ringkasan Sektor</h5>", unsafe_allow_html=True)
+    total_pop = sum(k['populasi'] for k in st.session_state.daftar_kandang)
+    st.info(f"🛖 Kandang Aktif: {len(st.session_state.daftar_kandang)} Sektor | 👥 Total Populasi: {total_pop:,} Ekor")
+
+    # DAFTAR BLOK KANDANG AKTIF
+    st.markdown("<h5 style='margin-bottom:4px; margin-top:12px;'>🛖 Pilih Blok Kandang:</h5>", unsafe_allow_html=True)
     for kandang in st.session_state.daftar_kandang:
         with st.container(border=True):
-            st.markdown(f"#### 🛖 {kandang['nama']}")
-            st.markdown(f"<p style='margin:0; font-size:13px; opacity:0.8;'>🧬 Jenis: {kandang['tipe']} | 📅 Umur: {kandang['umur']} Hari<br>📊 Jumlah Ayam: <b>{kandang['populasi']} Ekor</b></p>", unsafe_allow_html=True)
+            st.markdown(f"<b>🛖 {kandang['nama']} ({kandang['tipe']})</b>", unsafe_allow_html=True)
+            st.markdown(f"<p style='margin:0; font-size:13px; opacity:0.8;'>📅 Umur: {kandang['umur']} Hari | 📊 Pop: {kandang['populasi']} Ekor</p>", unsafe_allow_html=True)
             st.write("")
-            
-            # Tombol klik masuk kandang
-            if st.button(f"Urus {kandang['nama']} ➡️", key=f"knd_{kandang['id']}", use_container_width=True):
+            if st.button(f"Buka Lembar Tugas {kandang['nama']} ➡️", key=f"btn_{kandang['id']}", use_container_width=True):
                 st.session_state.kandang_dipilih = kandang
-                st.session_state.halaman_aktif = "DETAIL_TUGAS"
+                st.session_state.halaman_aktif = "LEMBAR_TUGAS"
                 st.rerun()
 
     st.divider()
@@ -93,60 +142,39 @@ elif st.session_state.halaman_aktif == "BERANDA_KANDANG":
         st.rerun()
 
 # =====================================================================
-# HALAMAN 4: LAPORAN HARIAN & ASISTEN AI PER KANDANG (SETELAH KANDANG DIKLIK)
+# HALAMAN 4: LEMBAR TUGAS HARIAN & ASISTEN AI PASIF (ON-DEMAND)
 # =====================================================================
-elif st.session_state.halaman_aktif == "DETAIL_TUGAS":
+elif st.session_state.halaman_aktif == "LEMBAR_TUGAS":
     kandang = st.session_state.kandang_dipilih
     
     st.markdown(f"### 🛖 Urus: {kandang['nama']}")
-    st.caption(f"🧬 Kategori: {kandang['tipe']} | 📅 Umur: {kandang['umur']} Hari")
+    st.caption(f"🧬 Komoditas: {st.session_state.jenis_unggas} | 📅 Umur: {kandang['umur']} Hari")
     
-    # TOMBOL KEMBALI KE BERANDA KANDANG UTAMA
-    if st.button("⬅️ Kembali ke Daftar Semua Kandang", use_container_width=True):
-        st.session_state.halaman_aktif = "BERANDA_KANDANG"
+    if st.button("⬅️ Kembali ke Dashboard Utama", use_container_width=True):
+        st.session_state.halaman_aktif = "DASHBOARD"
         st.rerun()
         
     st.divider()
 
-    # 🟢 SUB-MENU 1: TUGAS DAN PENCATATAN HARIAN (SANGAT MUDAH)
-    st.markdown("#### 📋 Tugas & Catatan Hari Ini")
+    # LEMBAR TUGAS HARIAN SANGAT MUDAH
+    st.markdown("##### 📋 Lembar Tugas Hari Ini")
     with st.container(border=True):
-        # Hitung kebutuhan pakan otomatis (0.1 kg pakan x jumlah ayam di kandang tersebut)
         kebutuhan_pakan = kandang['populasi'] * 0.1
-        biaya_pakan = kebutuhan_pakan * 8500  # Rp 8.500 per Kg
-        
-        # Checkbox Beri Pakan
         cek_pakan = st.checkbox(f"Sudah Beri Pakan Hari Ini ({kebutuhan_pakan:.1f} Kg)", value=kandang['pakan_done'])
         
         if cek_pakan and not kandang['pakan_done']:
             st.session_state.stok_pakan -= kebutuhan_pakan
-            st.session_state.sisa_uang -= biaya_pakan
             kandang['pakan_done'] = True
-            st.success("✅ Terpangkas! Stok pakan berkurang & pengeluaran uang tercatat otomatis di latar belakang.")
+            st.success("✅ Stok pakan otomatis terpotong di gudang latar belakang!")
             st.rerun()
         elif not cek_pakan and kandang['pakan_done']:
             st.session_state.stok_pakan += kebutuhan_pakan
-            st.session_state.sisa_uang += biaya_pakan
             kandang['pakan_done'] = False
             st.rerun()
 
         st.write("")
-        # Input pencatatan angka kematian oleh peternak awam
-        ayam_mati_hari_ini = st.number_input("Jumlah Ayam Mati Hari Ini (Ekor):", min_value=0, value=kandang['mati'], step=1)
-        if ayam_mati_hari_ini != kandang['mati']:
-            kandang['populasi'] -= (ayam_mati_hari_ini - kandang['mati'])
-            kandang['mati'] = ayam_mati_hari_ini
-            st.success("Data kematian diperbarui!")
-            st.rerun()
-
-    # 🤖 SUB-MENU 2: ASISTEN PINTAR AI YANG MENYATU
-    st.markdown("#### 🤖 Saran dari Asisten Pintar AI")
-    
-    # AI otomatis mendeteksi kondisi kandang spesifik ini dan langsung bicara bahasa awam
-    st.markdown(f"""
-    <div style='background-color: #E3F2FD; padding: 12px; border-radius: 10px; border-left: 4px solid #1565C0; color: #1565C0; font-size:14px;'>
-        <b>Saran AI untuk {kandang['nama']}:</b><br>
-        Halo {st.session_state.nama_peternak}, ayam KUB Anda saat ini berumur {kandang['umur']} hari. <br><br>
-        💡 <b>Instruksi Hari Ini:</b> Campurkan <b>60 gram vitamin unggas</b> ke dalam bak air minum utama karena cuaca di wilayah {st.session_state.lokasi_peternak} diprediksi agak mendung sore nanti. Ini penting untuk mencegah ayam terserang stres suhu!
-    </div>
-    """, unsafe_allow_html=True)
+        ayam_mati = st.number_input("Catat Ayam Mati Hari Ini (Ekor):", min_value=0, value=kandang['mortalitas'], step=1)
+        if ayam_mati != kandang['mortalitas']:
+            kandang['populasi'] -= (ayam_mati - kandang['mortalitas'])
+            kandang['mortalitas'] = ayam_mati
+            st.success("Data populasi diperbarui!")
